@@ -11,7 +11,11 @@
         <div class="col-md">
             <div>
                 <h3>{{current_user.login}}</h3>
-
+                <img src="{{avatar}}" alt="Тут должна быть аватарка" width="200">
+                <form enctype="multipart/form-data" method="post">
+                    <p><input type="file" name="avatar">
+                        <input type="submit" value="Отправить"></p>
+                </form>
                 <button type="button" onclick="window.location.href = '/logout';"
                         class="btn btn-danger">
                     Выйти
