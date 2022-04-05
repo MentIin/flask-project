@@ -3,7 +3,16 @@
 {% block content %}
 <div class="container pull-right">
     <div class="d-flex justify-content-end">
-        <button  type="button" onclick="window.location.href = '/profile?last_page={{page}}';" class="btn btn-primary">Профиль</button>
+        {% if current_user.is_authenticated %}
+        <button type="button" onclick="window.location.href = '/profile?last_page={{page}}';" class="btn btn-primary">
+            {{current_user.login}}
+        </button>
+        {% else %}
+        <button type="button" onclick="window.location.href = '/profile?last_page={{page}}';" class="btn btn-primary">
+            Войти
+        </button>
+        {% endif %}
+
     </div>
     <div class="container">
         <div class="row">

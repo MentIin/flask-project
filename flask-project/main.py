@@ -15,13 +15,21 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 db_session.global_init(f"db/nedogram.sqlite")
-user = User()
+
 
 class LoginForm(FlaskForm):
     login = EmailField('Логин', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
+
+
+class RegistrationForm(FlaskForm):
+    login = EmailField('Логин', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    confirm_password = PasswordField('Повторите пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
+    submit = SubmitField('Создать аккаунт')
 
 
 @app.route("/", methods=['GET'])
@@ -85,6 +93,33 @@ def login():
     return render_template('login.html', form=form)
 
 
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = User()
+        user_with_same_login = db_sess.query(User).filter(User.login == form.login.data).first()
+
+        if not user_with_same_login:
+            if form.password.data == form.confirm_password.data:
+                user.login = form.login.data
+                user.password = form.password.data
+                db_sess.add(user)
+                db_sess.commit()
+                login_user(user, remember=form.remember_me.data)
+                return redirect("/")
+            else:
+                return render_template('registration.html',
+                                       message="Пароли не совпадают",
+                                       form=form)
+        else:
+            return render_template('registration.html',
+                                   message="Пользователь с таким логином уже существует",
+                                   form=form)
+    return render_template('registration.html', form=form)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
@@ -96,6 +131,7 @@ def load_user(user_id):
 def logout():
     logout_user()
     return redirect("/")
+
 
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')

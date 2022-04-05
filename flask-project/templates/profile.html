@@ -1,26 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container pull-right">
-    <div class="d-flex justify-content-end">
-        <button  type="button" onclick="window.location.href = '/main?page={{last_page}}';" class="btn btn-primary">На главную</button>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm">
 
-            </div>
-            <div class="col-sm">
-                {{current_user.login}}
-            </div>
-            <div class="col-sm">
 
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+
+        </div>
+        <div class="col-md">
+            <div>
+                <h3>{{current_user.login}}</h3>
+
+                <button type="button" onclick="window.location.href = '/logout';"
+                        class="btn btn-danger">
+                    Выйти
+                </button>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="d-flex justify-content-end">
+                <button type="button" onclick="window.location.href = '/main?page={{last_page}}';"
+                        class="btn btn-primary">
+                    На главную
+                </button>
             </div>
 
         </div>
-        <br>
-        <a>&#8195</a><br>
-        <a>&#8195</a><br>
+
     </div>
+    <br>
+    <a>&#8195</a><br>
+    <a>&#8195</a><br>
+</div>
 </div>
 {% endblock %}
