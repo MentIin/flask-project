@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, BooleanField, SubmitField
+from wtforms import EmailField, PasswordField, BooleanField, \
+    SubmitField, TextAreaField, FileField
 from wtforms.validators import DataRequired
+from flask_wtf.file import FileAllowed
 from data import db_session
 from data.users import User
 from data.posts import Post
@@ -36,46 +38,52 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Создать аккаунт')
 
 
+class CreatePostForm(FlaskForm):
+    text = TextAreaField('text', validators=[])
+    image = FileField("image", validators=[FileAllowed(["png", "jpg", "bmp"], "Image only")])
+    # image = FileField("image", validators=[])
+    submit = SubmitField('Опубликовать')
+
+
 @app.route("/", methods=['GET'])
 @app.route("/main", methods=['GET'])
 @app.route("/index", methods=['GET'])
 def index():
     page = request.args.get("page")
-    if page:
+    if page.isnumeric():
         page = int(page)
     else:
         page = 1
-    posts_list = {
-        "posts": [
-            {
-                "title": "Сегодня хорошая погода",
-                "img": "static/img/i.jpeg",
-                "likes": 3
-            },
-            {
-                "title": "Завтра хорошая погода",
-                "img": "static/img/i.jpeg",
-                "likes": 4
-            },
-            {
-                "title": "Послезавтра дождь",
-                "img": "static/img/i.jpeg",
-                "likes": 1
-            },
-            {
-                "title": "Цветочек",
-                "img": "static/img/img.png",
-                "likes": 6666
-            }
-        ]
-    }
-    return render_template("index.html", posts=posts_list, page=page, title="Lenta")
+
+    db_sess = db_session.create_session()
+    posts = list(db_sess.query(Post).filter())
+    posts.sort(key=lambda x: x.create_time, reverse=True)
+
+    posts_data = []
+    for post in posts:
+        post: Post
+        d = {}
+        d["title"] = post.title
+        d["img"] = post.image_path
+        d["likes"] = post.liked
+        posts_data.append(d)
+
+    print(posts_data)
+
+    posts_json = {}
+    posts_json["posts"] = posts_data
+    return render_template("index.html", posts=posts_json, page=page, title="Главная")
 
 
 @app.route("/profile", methods=['GET', "POST"])
 def profile():
-    if request.method == 'POST':
-        file = request.files["avatar"]
+    if request.method == "POST":
+        avatar = request.files["avatar"]
+    else:
+        avatar = None
+
+    if avatar:
+        file = avatar
         current_time = datetime.datetime.now()
         path = Path("static", "avatars")
         folder = str(current_time.date())
@@ -99,14 +107,36 @@ def profile():
         user.avatar_im_path = os.path.join(folder, filename)
         db_sess.commit()
         return redirect(request.url)
+
     if current_user.is_authenticated:
         last_page = request.args.get("last_page")
         avatar_path = Path("static", "avatars", current_user.avatar_im_path)
-        print(avatar_path)
         return render_template("profile.html", avatar=avatar_path,
-                               last_page=last_page, title=current_user.login)
+                               last_page=last_page, title="Профиль " + current_user.login)
     else:
         return redirect("/login")
+
+
+@app.route('/create_post', methods=['GET', 'POST'])
+def create_post():
+    form = CreatePostForm(request.form)
+    if request.method == "POST":
+        if len(form.text.data) > 0 or len(form.image.data) > 0:
+            db_sess = db_session.create_session()
+            post = Post()
+            post.user_id = current_user.id
+            post.title = form.text.data
+            db_sess.add(post)
+            db_sess.commit()
+            return render_template("create_post.html", title="Создать публикацию",
+                                   form=form, message="Успешно")
+    if form.validate_on_submit():
+        flash('Success')
+        for i in range(10 ** 10):
+            print(1)
+        return redirect("/profile")
+    return render_template("create_post.html", title="Создать публикацию",
+                           form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

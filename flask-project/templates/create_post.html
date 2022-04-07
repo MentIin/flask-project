@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+
+        </div>
+        <div class="col-sm">
+            <div>
+                <div><h3>Создать пост</h3>
+                        <form class="create-post-form" action="" method="post">
+                            <p>{{form.text(class="form-control")}}</p>
+                            <p>
+                                    <h6>Прикрепить изображение</h6>
+                                    {{form.image(class="form-control") }}
+                            </p>
+                            <p>{{ form.submit(type="submit", class="btn btn-warning") }}</p>
+                        </form>
+                        {{message}}
+                    </div>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="d-flex justify-content-end">
+                <button type="button" onclick="window.location.href = '/main?page={{last_page}}';"
+                        class="btn btn-primary">
+                    На главную
+                </button>
+                <button type="button" onclick="window.location.href = '/profile';"
+                        class="btn btn-primary">
+                    Профиль
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+    <br>
+    <a>&#8195</a><br>
+    <a>&#8195</a><br>
+</div>
+</div>
+{% endblock %}
+

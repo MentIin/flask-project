@@ -8,16 +8,30 @@
         <div class="col-sm">
 
         </div>
-        <div class="col-md">
+        <div class="col-sm">
             <div>
                 <h3>{{current_user.login}}</h3>
                 <img src="{{avatar}}" alt="Тут должна быть аватарка" width="200">
-                <form enctype="multipart/form-data" method="post">
-                    <p><input type="file" name="avatar">
-                        <input type="submit" value="Отправить"></p>
+                <form enctype="multipart/form-data" method="POST">
+                    <p>
+                    <div>
+                        <label for="load-avatar" class="btn btn-primary">Загрузить иконку профиля</label>
+                        <input class="load-avatar-input" accept="image/*" type='file' name="avatar"
+                               onchange="form.submit()" id="load-avatar">
+                    </div>
+                    </p>
+                    <p>
+
+                    </p>
                 </form>
+                <p>
+                <button type="button" onclick="window.location.href = '/create_post';"
+                        class="btn btn-primary">
+                    Создать пост
+                </button>
+                </p>
                 <button type="button" onclick="window.location.href = '/logout';"
-                        class="btn btn-danger">
+                        class="btn btn-danger" style="margin: 0 0 -105px 0;">
                     Выйти
                 </button>
             </div>
