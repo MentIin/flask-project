@@ -1,9 +1,10 @@
 import datetime
+
 import sqlalchemy as sa
-from sqlalchemy import orm
-from sqlalchemy.orm import relationship
-from .db_session import SqlAlchemyBase
 from flask_login import UserMixin
+from sqlalchemy.orm import relationship
+
+from .db_session import SqlAlchemyBase
 
 association_table = sa.Table(
     'PostToUsers',

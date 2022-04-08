@@ -1,8 +1,7 @@
-from sqlalchemy.orm import relationship, backref
-from data.db_session import SqlAlchemyBase
 import sqlalchemy as sa
+from sqlalchemy.orm import relationship, backref
 
-
+from data.db_session import SqlAlchemyBase
 
 
 class Likes(SqlAlchemyBase):

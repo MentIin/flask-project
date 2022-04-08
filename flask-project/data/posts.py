@@ -1,11 +1,9 @@
 import datetime
-from sqlalchemy import orm
-from .db_session import SqlAlchemyBase
-from sqlalchemy import orm
+
 import sqlalchemy as sa
-from sqlalchemy.orm import relationship
+from sqlalchemy import orm
 
-
+from .db_session import SqlAlchemyBase
 
 
 class Post(SqlAlchemyBase):

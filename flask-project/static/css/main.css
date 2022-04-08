@@ -1,0 +1,67 @@
+.post-im
+{
+     margin: 0 auto;
+     width: 410px;
+}
+
+.posts {
+        background-color: #d3d3d3;
+        outline: 6px ridge #000000;
+        border-radius: 1rem;
+}
+
+.underpost{
+    max-width: 1000;
+    outline: 4px ridge #000000;
+    background-color: #d4d4d4;
+    height: 60px;
+
+}
+
+.likes{
+
+}
+
+.react-btn{
+    max-width: 100px;
+    min-width: 80px;
+    height:60px;
+
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.title{
+    width: 400px:
+}
+.choice-page{
+    padding: 5px 0px 5px;
+}
+.choice-page-btn{
+    padding: 1px 12px 3px;
+}
+
+.next-prev{
+    padding: 12px 30px 12px;
+}
+
+.load-avatar {
+ position: relative;
+ margin: 0 0 5px 0;
+}
+.load-avatar-input {
+ opacity: 0.2;
+ filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+ position: relative;
+ z-index: 2;
+ height: 34px;
+ width: 300px;
+}
+
+
+.load-post-im{
+    padding: 12px 12px 12px;
+}
+.create-post-form{
+    width: 350px;
+}

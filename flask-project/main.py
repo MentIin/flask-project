@@ -1,17 +1,18 @@
-from flask import Flask, render_template, request, redirect, flash, url_for
+import datetime
+import os
+from pathlib import Path
+
+from flask import Flask, render_template, request, redirect, flash
+from flask_login import *
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed
 from wtforms import EmailField, PasswordField, BooleanField, \
     SubmitField, TextAreaField, FileField
 from wtforms.validators import DataRequired
-from flask_wtf.file import FileAllowed
+
 from data import db_session
-from data.users import User
 from data.posts import Post
-from data.likes import Likes
-from flask_login import *
-import os
-import datetime
-from pathlib import Path
+from data.users import User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'aba43urg4d78g2983g_key'
