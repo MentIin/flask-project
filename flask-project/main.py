@@ -46,13 +46,37 @@ class CreatePostForm(FlaskForm):
     submit = SubmitField('Опубликовать')
 
 
+def save_image(image, folder="avatars"):
+    file = image
+    current_time = datetime.datetime.now()
+    path = Path("static", folder)  # static чтобы браузер не ругался
+    date_folder = str(current_time.date())
+    filename = str(current_user.id) \
+               + str(current_time.time()).replace(":", "-").replace(".", "-") \
+               + ".png"
+
+    # сохраняем файл
+    path = Path("static", folder, date_folder)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    file.save(os.path.join(path, filename))
+    return os.path.join(folder, filename)
+
+
+def save_avatar(image):
+    save_image(image, folder="avatars")
+
+
 @app.route("/", methods=['GET'])
 @app.route("/main", methods=['GET'])
 @app.route("/index", methods=['GET'])
 def index():
     page = request.args.get("page")
-    if page.isnumeric():
-        page = int(page)
+    if page:
+        if page.isnumeric():
+            page = int(page)
+        else:
+            page = 1
     else:
         page = 1
 
@@ -66,7 +90,7 @@ def index():
         d = {}
         d["title"] = post.title
         d["img"] = post.image_path
-        d["likes"] = post.liked
+        d["likes"] = len(post.liked)
         posts_data.append(d)
 
     print(posts_data)
@@ -86,7 +110,7 @@ def profile():
     if avatar:
         file = avatar
         current_time = datetime.datetime.now()
-        path = Path("static", "avatars")
+        path = Path("static", "avatars")  # static чтобы браузер не ругался
         folder = str(current_time.date())
         filename = str(current_user.id) \
                    + str(current_time.time()).replace(":", "-").replace(".", "-") \
@@ -111,7 +135,10 @@ def profile():
 
     if current_user.is_authenticated:
         last_page = request.args.get("last_page")
-        avatar_path = Path("static", "avatars", current_user.avatar_im_path)
+        if current_user.avatar_im_path:
+            avatar_path = Path("static", "avatars", current_user.avatar_im_path)
+        else:
+            avatar_path = ""
         return render_template("profile.html", avatar=avatar_path,
                                last_page=last_page, title="Профиль " + current_user.login)
     else:
@@ -128,6 +155,7 @@ def create_post():
             post.user_id = current_user.id
             post.title = form.text.data
             db_sess.add(post)
+
             db_sess.commit()
             return render_template("create_post.html", title="Создать публикацию",
                                    form=form, message="Успешно")
@@ -157,7 +185,7 @@ def login():
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    form = RegistrationForm()
+    form = RegistrationForm()  # надо зашифровать пароль!
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = User()
