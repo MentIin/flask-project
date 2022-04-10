@@ -3,7 +3,7 @@
 {% block content %}
 
 
-<div class="container">
+<div class="container" xmlns="http://www.w3.org/1999/html">
     <div class="row">
         <div class="col-sm">
 
@@ -11,16 +11,17 @@
         <div class="col-sm">
             <div>
                 <div><h3>Создать пост</h3>
-                        <form class="create-post-form" action="" method="post">
-                            <p>{{form.text(class="form-control")}}</p>
-                            <p>
-                                    <h6>Прикрепить изображение</h6>
-                                    {{form.image(class="form-control") }}
-                            </p>
-                            <p>{{ form.submit(type="submit", class="btn btn-warning") }}</p>
-                        </form>
-                        {{message}}
-                    </div>
+                    <form enctype="multipart/form-data" class="create-post-form" action="" method="POST">
+                        <p>{{form.text(class="form-control")}}</p>
+                        <p>
+                        <h6>Прикрепить изображение</h6>
+                        <input type="file" accept="image/*"
+                               name="post_im" class="form-control">
+                        </p>
+                        <p>{{ form.submit(type="submit", class="btn btn-warning") }}</p>
+                    </form>
+                    {{message}}
+                </div>
             </div>
         </div>
         <div class="col-sm">

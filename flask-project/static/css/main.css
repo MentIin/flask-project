@@ -1,14 +1,15 @@
 .post-im
 {
      margin: 0 auto;
-     width: 450px;
+     width: 430px;
 }
 
 .posts {
         background-color: #d3d3d3;
         outline: 6px ridge #000000;
         border-radius: 1rem;
-        width: 450px;
+        max-width: 450px;
+        min-width: 450px;
 }
 
 .underpost{

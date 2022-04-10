@@ -4,6 +4,7 @@ from pathlib import Path
 
 from flask import Flask, render_template, request, redirect, flash
 from flask_login import *
+
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
 from wtforms import EmailField, PasswordField, BooleanField, \
@@ -60,11 +61,15 @@ def save_image(image, folder="avatars"):
     if not os.path.exists(path):
         os.makedirs(path)
     file.save(os.path.join(path, filename))
-    return os.path.join(folder, filename)
+    return os.path.join(date_folder, filename)
 
 
 def save_avatar(image):
-    save_image(image, folder="avatars")
+    return save_image(image, folder="avatars")
+
+
+def save_post_image(image):
+    return save_image(image, folder="post-images")
 
 
 @app.route("/", methods=['GET'])
@@ -81,19 +86,25 @@ def index():
         page = 1
 
     db_sess = db_session.create_session()
+    n = 4
     posts = list(db_sess.query(Post).filter())
     posts.sort(key=lambda x: x.create_time, reverse=True)
+    posts = posts[(page - 1) * n:(page) * n]  # НАДО ОПТИМИЗИРОВАТЬ
 
     posts_data = []
     for post in posts:
         post: Post
         d = {}
         d["title"] = post.title
-        d["img"] = post.image_path
+        if post.image_path:
+            img_path = Path("static", "post-images", post.image_path)
+        else:
+            img_path = ""
+        d["img"] = img_path
         d["likes"] = len(post.liked)
         posts_data.append(d)
 
-    print(posts_data)
+    #print(posts_data)
 
     posts_json = {}
     posts_json["posts"] = posts_data
@@ -108,28 +119,10 @@ def profile():
         avatar = None
 
     if avatar:
-        file = avatar
-        current_time = datetime.datetime.now()
-        path = Path("static", "avatars")  # static чтобы браузер не ругался
-        folder = str(current_time.date())
-        filename = str(current_user.id) \
-                   + str(current_time.time()).replace(":", "-").replace(".", "-") \
-                   + ".png"
-        # Если файл не выбран, то браузер может
-        # отправить пустой файл без имени.
-        if file.filename == '':
-            flash('Нет выбранного файла')
-            return redirect(request.url)
-
-        # сохраняем файл
-        path = Path("static", "avatars", folder)
-        if not os.path.exists(path):
-            os.makedirs(path)
-        file.save(os.path.join(path, filename))
-
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.id == current_user.id).first()
-        user.avatar_im_path = os.path.join(folder, filename)
+        user.avatar_im_path = save_avatar(avatar)
+        print(user.avatar_im_path)
         db_sess.commit()
         return redirect(request.url)
 
@@ -149,12 +142,21 @@ def profile():
 def create_post():
     form = CreatePostForm(request.form)
     if request.method == "POST":
-        if len(form.text.data) > 0 or len(form.image.data) > 0:
+        image = request.files["post_im"]
+    else:
+        image = None
+
+    if request.method == "POST":
+        if len(form.text.data) > 0 or image:
             db_sess = db_session.create_session()
             post = Post()
             post.user_id = current_user.id
             post.title = form.text.data
             db_sess.add(post)
+
+            post.image_path = save_post_image(image)
+            print(post.image_path)
+            db_sess.commit()
 
             db_sess.commit()
             return render_template("create_post.html", title="Создать публикацию",
