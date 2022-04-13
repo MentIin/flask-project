@@ -1,6 +1,7 @@
 import datetime
 import os
 from pathlib import Path
+from waitress import serve
 
 from flask import Flask, render_template, request, redirect, flash
 from flask_login import *
@@ -18,7 +19,7 @@ from data.users import User
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'aba43urg4d78g2983g_key'
 
-app.debug = True
+# app.debug = True
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -223,4 +224,6 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1')
+
+    #app.run(port=8080, host='127.0.0.1')
+    serve(app, port=8080, host='127.0.0.1')
