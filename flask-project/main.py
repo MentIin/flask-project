@@ -110,9 +110,6 @@ def index():
         d["author_avatar"] = avatar_path
 
         posts_data.append(d)
-
-    print(posts_data)
-
     posts_json = {}
     posts_json["posts"] = posts_data
     return render_template("index.html", posts=posts_json, page=page, title="Главная")
@@ -129,16 +126,14 @@ def profile():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         user.avatar_im_path = save_avatar(avatar)
-        print(user.avatar_im_path)
         db_sess.commit()
         return redirect(request.url)
 
     if current_user.is_authenticated:
         last_page = request.args.get("last_page")
-        if current_user.avatar_im_path:
-            avatar_path = Path("static", "avatars", current_user.avatar_im_path)
-        else:
-            avatar_path = ""
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        avatar_path = user.get_avatar_full_path()
         return render_template("profile.html", avatar=avatar_path,
                                last_page=last_page, title="Профиль " + current_user.login)
     else:
