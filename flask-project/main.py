@@ -98,13 +98,20 @@ def index():
         d["title"] = post.title
         if post.image_path:
             img_path = Path("static", "post-images", post.image_path)
+            d["img"] = img_path
+            d["has_image"] = True
         else:
-            img_path = ""
-        d["img"] = img_path
+            d["has_image"] = False
+
         d["likes"] = len(post.liked)
+
+        d["author_login"] = post.user.login
+        avatar_path = post.user.get_avatar_full_path()
+        d["author_avatar"] = avatar_path
+
         posts_data.append(d)
 
-    #print(posts_data)
+    print(posts_data)
 
     posts_json = {}
     posts_json["posts"] = posts_data
@@ -153,19 +160,14 @@ def create_post():
             post.user_id = current_user.id
             post.title = form.text.data
             db_sess.add(post)
+            if image:
+                post.image_path = save_post_image(image)
+                db_sess.commit()
 
-            post.image_path = save_post_image(image)
-            print(post.image_path)
             db_sess.commit()
 
-            db_sess.commit()
-            return render_template("create_post.html", title="Создать публикацию",
-                                   form=form, message="Успешно")
-    if form.validate_on_submit():
-        flash('Success')
-        for i in range(10 ** 10):
-            print(1)
-        return redirect("/profile")
+            flash('Success')
+            return redirect("/profile")
     return render_template("create_post.html", title="Создать публикацию",
                            form=form)
 

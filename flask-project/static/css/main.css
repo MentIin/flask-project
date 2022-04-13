@@ -68,3 +68,7 @@
 .create-post-form{
     width: 350px;
 }
+
+.author-avatar{
+    height: 50px;
+}
