@@ -18,6 +18,25 @@
 </head>
 
 <body>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAnM2n3XvRBZKZSLZWPlr9yya6ploKYHF0",
+    authDomain: "nedogram.firebaseapp.com",
+    projectId: "nedogram",
+    storageBucket: "nedogram.appspot.com",
+    messagingSenderId: "8387597199",
+    appId: "1:8387597199:web:7eb006163fd622972931fa"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>

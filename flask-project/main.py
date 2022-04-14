@@ -88,14 +88,16 @@ def index():
 
     db_sess = db_session.create_session()
     n = 4
-    posts = list(db_sess.query(Post).filter())
+    posts = list(db_sess.query(Post).filter(Post.is_deleted == False))
     posts.sort(key=lambda x: x.create_time, reverse=True)
-    posts = posts[(page - 1) * n:(page) * n]  # НАДО ОПТИМИЗИРОВАТЬ
+    posts = posts[(page - 1) * n:(page) * n]
 
     posts_data = []
     for post in posts:
         post: Post
+
         d = {}
+        d["id"] = post.id
         d["title"] = post.title
         if post.image_path:
             img_path = Path("static", "post-images", post.image_path)
@@ -223,7 +225,9 @@ def logout():
     return redirect("/")
 
 
+prodaction = False
 if __name__ == '__main__':
-
-    #app.run(port=8080, host='127.0.0.1')
-    serve(app, port=8080, host='127.0.0.1')
+    if prodaction:
+        serve(app, port=8080, host='127.0.0.1')
+    else:
+        app.run(port=8080, host='127.0.0.1')
