@@ -18,4 +18,4 @@ class Post(SqlAlchemyBase):
     user_id = sa.Column(sa.Integer,
                         sa.ForeignKey("users.id"))
     user = orm.relation('User')
-    is_deleted = sa.Column(sa.Boolean)
+    is_deleted = sa.Column(sa.Boolean, default=False)

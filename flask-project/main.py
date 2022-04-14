@@ -19,7 +19,7 @@ from data.users import User
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'aba43urg4d78g2983g_key'
 
-# app.debug = True
+app.debug = True
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -88,7 +88,7 @@ def index():
 
     db_sess = db_session.create_session()
     n = 4
-    posts = list(db_sess.query(Post).filter(Post.is_deleted == False))
+    posts = list(db_sess.query(Post).filter())
     posts.sort(key=lambda x: x.create_time, reverse=True)
     posts = posts[(page - 1) * n:(page) * n]
 
@@ -223,6 +223,27 @@ def load_user(user_id):
 def logout():
     logout_user()
     return redirect("/")
+
+
+@login_required
+@app.route('/like/<index_no>', methods=['GET', 'POST'])
+def data_get(index_no):
+    if request.method == 'GET':  # POST request
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        post = db_sess.query(Post).filter(Post.id == index_no).first()  # filter item by the ID
+        liked = False
+        for i in user.posts:
+            if post.id == i.id:
+                liked = True
+                user.posts.remove(i)
+
+        if not liked:
+            user.posts.append(post)
+          # add +1 to the rating value
+        new_value = len(post.liked)
+        db_sess.commit()  # record to database
+        return '%s' % (new_value)
 
 
 prodaction = False
