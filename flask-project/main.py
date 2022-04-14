@@ -87,7 +87,8 @@ def index():
         page = 1
 
     db_sess = db_session.create_session()
-    n = 4
+    n = 10
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
     posts = list(db_sess.query(Post).filter())
     posts.sort(key=lambda x: x.create_time, reverse=True)
     posts = posts[(page - 1) * n:(page) * n]
@@ -107,6 +108,7 @@ def index():
             d["has_image"] = False
 
         d["likes"] = len(post.liked)
+        d["liked"] = user in post.liked
 
         d["author_login"] = post.user.login
         avatar_path = post.user.get_avatar_full_path()

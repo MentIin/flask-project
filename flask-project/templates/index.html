@@ -35,9 +35,15 @@
 
                 <div class="row underpost">
                     <div class="col-sm">
+                        {% if item["liked"] %}
+                        <button id="{{item['id']}}" onclick="Like()" type="button" class="btn btn-info react-btn">
+                            Круто
+                        </button>
+                        {% else %}
                         <button id="{{item['id']}}" onclick="Like()" type="button" class="btn btn-primary react-btn">
                             Круто
                         </button>
+                        {% endif %}
                     </div>
                     <script>
                     function Like() {
