@@ -88,7 +88,8 @@ def index():
 
     db_sess = db_session.create_session()
     n = 10
-    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    if current_user.is_authenticated:
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
     posts = list(db_sess.query(Post).filter())
     posts.sort(key=lambda x: x.create_time, reverse=True)
     posts = posts[(page - 1) * n:(page) * n]
@@ -108,7 +109,8 @@ def index():
             d["has_image"] = False
 
         d["likes"] = len(post.liked)
-        d["liked"] = user in post.liked
+        if current_user.is_authenticated:
+            d["liked"] = user in post.liked
 
         d["author_login"] = post.user.login
         avatar_path = post.user.get_avatar_full_path()
@@ -242,7 +244,7 @@ def data_get(index_no):
 
         if not liked:
             user.posts.append(post)
-          # add +1 to the rating value
+        # add +1 to the rating value
         new_value = len(post.liked)
         db_sess.commit()  # record to database
         return '%s' % (new_value)

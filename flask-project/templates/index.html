@@ -35,7 +35,11 @@
 
                 <div class="row underpost">
                     <div class="col-sm">
-                        {% if item["liked"] %}
+                        {% if not current_user.is_authenticated %}
+                        <button type="button" class="btn btn-warning react-btn">
+                            Круто
+                        </button>
+                        {% elif item["liked"] %}
                         <button id="{{item['id']}}" onclick="Like()" type="button" class="btn btn-info react-btn">
                             Круто
                         </button>
