@@ -20,6 +20,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'aba43urg4d78g2983g_key'
 
 app.debug = True
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
