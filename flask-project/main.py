@@ -175,7 +175,7 @@ def registration():
         if not user_with_same_login:
             if form.password.data == form.confirm_password.data:
                 user.login = form.login.data
-                user.password = form.password.data
+                user.set_password(form.password.data)
                 db_sess.add(user)
                 db_sess.commit()
                 login_user(user, remember=form.remember_me.data)
