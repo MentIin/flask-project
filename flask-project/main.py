@@ -16,6 +16,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'aba43urg4d78g2983g_key'
 
 app.debug = True
+production = False
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -166,7 +167,7 @@ def login():
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    form = RegistrationForm()  # надо зашифровать пароль!
+    form = RegistrationForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = User()
@@ -225,9 +226,8 @@ def data_get(index_no):
         return '%s' % (new_value)
 
 
-prodaction = False
 if __name__ == '__main__':
-    if prodaction:
+    if production:
         serve(app, port=8080, host='127.0.0.1')
     else:
         app.run(port=8080, host='127.0.0.1')
