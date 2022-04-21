@@ -12,16 +12,12 @@
         min-width: 450px;
 }
 
+
 .underpost{
     max-width: 1000;
     outline: 4px ridge #000000;
     background-color: #d4d4d4;
     height: 60px;
-
-}
-
-.likes{
-
 }
 
 .react-btn{
